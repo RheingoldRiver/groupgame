@@ -20,6 +20,7 @@ export const Card = ({ cardId }: { cardId: number[] }) => {
     >
       {range(cardId[2] + 1).map((i) => (
         <div
+          key={i}
           className={clsx("w-[118px] h-[46px] bg-no-repeat bg-cover", CARD_IMAGES[cardId[0]][cardId[1]])}
           style={{
             filter: IMAGE_FILTERS[cardId[3]],
