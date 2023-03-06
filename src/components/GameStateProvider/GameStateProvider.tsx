@@ -7,8 +7,8 @@ interface GameState {
   deck: number[][];
 }
 
-const DEFAULT_GAME_STATE = {
-  deck: [[0]],
+const DEFAULT_GAME_STATE: GameState = {
+  deck: [],
 };
 
 export const GameStateContext = createContext(DEFAULT_GAME_STATE);
