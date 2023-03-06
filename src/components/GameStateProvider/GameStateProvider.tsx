@@ -4,29 +4,41 @@ import { useState } from "react";
 import { getRandomInt } from "../../utils";
 
 interface GameState {
-  deck: number[][];
+  deck: CardState[];
 }
 
 const DEFAULT_GAME_STATE: GameState = {
   deck: [],
 };
 
+export interface CardState {
+  id: string;
+  vector: number[];
+}
+
 export const GameStateContext = createContext(DEFAULT_GAME_STATE);
 
-function addAttribute(numLeft: number, deck: number[][]): number[][] {
+function addAttribute(numLeft: number, deck: CardState[]): CardState[] {
   if (numLeft === 0) {
     return deck;
   }
-  const newDeck: number[][] = [];
+  const newDeck: CardState[] = [];
   range(3).map((i: number) => {
-    deck.map((card: number[]) => {
-      newDeck.push([i, ...card]);
+    deck.map((card: CardState) => {
+      newDeck.push({
+        // We will throw out previous ids, there is no reason to save them
+        // because the deck was not constructed fully yet & we have not used them
+        // for anything. If there was some reason to preserve them, this might be
+        // a more difficult thing to do
+        id: crypto.randomUUID(),
+        vector: [i, ...card.vector],
+      });
     });
   });
   return addAttribute(numLeft - 1, newDeck);
 }
 
-function shuffleDeck(deck: number[][]) {
+function shuffleDeck(deck: CardState[]) {
   const max = deck.length;
   for (let k = 0; k < 100; k++) {
     const a = getRandomInt(max);
@@ -39,8 +51,12 @@ function shuffleDeck(deck: number[][]) {
 }
 
 export function GameStateProvider({ children }: { children: ReactNode }) {
-  const [deck, setDeck] = useState<number[][]>(() => {
-    const baseDeck = [[0], [1], [2]];
+  const [deck, setDeck] = useState<CardState[]>(() => {
+    const baseDeck = [
+      { id: crypto.randomUUID(), vector: [0] },
+      { id: crypto.randomUUID(), vector: [1] },
+      { id: crypto.randomUUID(), vector: [2] },
+    ];
     const tempDeck = addAttribute(3, baseDeck);
     // make the type checker happy since addAttribute is recursive
     if (tempDeck === undefined) return baseDeck;
