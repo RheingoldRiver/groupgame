@@ -22,13 +22,13 @@ export const Card = ({ card }: { card: CardType }) => {
   return (
     <div
       className={clsx(
-        "flex flex-col gap-5 justify-center",
+        "flex flex-col gap-5 justify-center cursor-pointer h-52",
         "border-slate-600 rounded-lg border-solid border-2 m-[2px] p-3",
         currentGroup.includes(card) && "!border-4 !border-green-500 !m-0",
         invalidGroup.includes(card) && "!border-4 !border-red-500 !m-0"
       )}
       onClick={() => {
-        handleCardClick(card.id);
+        handleCardClick(card);
       }}
     >
       {range(vector[2] + 1).map((i) => (
