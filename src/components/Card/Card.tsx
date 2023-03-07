@@ -19,13 +19,14 @@ const IMAGE_FILTERS = [
 export const Card = ({ card }: { card: CardType }) => {
   const { handleCardClick, currentGroup, invalidGroup } = useContext(GameStateContext);
   const vector = card.vector;
+
   return (
     <div
       className={clsx(
         "flex flex-col gap-5 justify-center cursor-pointer h-52",
         "border-slate-600 rounded-lg border-solid border-2 m-[2px] p-3",
         currentGroup.includes(card) && "!border-4 !border-green-500 !m-0",
-        invalidGroup.includes(card) && "!border-4 !border-red-500 !m-0"
+        invalidGroup.map((invalidCard) => invalidCard.card).includes(card) && "!border-4 !border-red-500 !m-0"
       )}
       onClick={() => {
         handleCardClick(card);
