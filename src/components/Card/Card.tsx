@@ -22,9 +22,9 @@ export const Card = ({ card }: { card: CardState }) => {
     <div
       className={clsx(
         "flex flex-col gap-5 justify-center",
-        "border-slate-600 rounded-lg border-solid border-2 p-3",
-        currentGroup.includes(card) && "border-5 border-green-500",
-        invalidGroup.includes(card) && "border-5 border-red-500"
+        "border-slate-600 rounded-lg border-solid border-2 m-[2px] p-3",
+        currentGroup.includes(card) && "!border-4 !border-green-500 !m-0",
+        invalidGroup.includes(card) && "!border-4 !border-red-500 !m-0"
       )}
       onClick={() => {
         handleCardClick(card.id);
