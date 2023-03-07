@@ -2,12 +2,13 @@ import { createContext, ReactNode, useEffect } from "react";
 import { range } from "lodash";
 import { useState } from "react";
 import { getRandomInt } from "../../utils";
+import { CardType } from "../Card/cardTypes";
 
 interface GameState {
-  deck: CardState[];
+  deck: CardType[];
   handleCardClick: Function;
-  currentGroup: CardState[];
-  invalidGroup: CardState[];
+  currentGroup: CardType[];
+  invalidGroup: CardType[];
 }
 
 const DEFAULT_GAME_STATE: GameState = {
@@ -17,11 +18,6 @@ const DEFAULT_GAME_STATE: GameState = {
   invalidGroup: [],
 };
 
-export interface CardState {
-  id: string;
-  vector: number[];
-}
-
 const DEFAULT_DECK = [
   { id: crypto.randomUUID(), vector: [0] },
   { id: crypto.randomUUID(), vector: [1] },
@@ -30,13 +26,13 @@ const DEFAULT_DECK = [
 
 export const GameStateContext = createContext(DEFAULT_GAME_STATE);
 
-function addAttribute(numLeft: number, deck: CardState[]): CardState[] {
+function addAttribute(numLeft: number, deck: CardType[]): CardType[] {
   if (numLeft === 0) {
     return deck;
   }
-  const newDeck: CardState[] = [];
+  const newDeck: CardType[] = [];
   range(3).map((i: number) => {
-    deck.map((card: CardState) => {
+    deck.map((card: CardType) => {
       newDeck.push({
         // We will throw out previous ids, there is no reason to save them
         // because the deck was not constructed fully yet & we have not used them
@@ -50,7 +46,7 @@ function addAttribute(numLeft: number, deck: CardState[]): CardState[] {
   return addAttribute(numLeft - 1, newDeck);
 }
 
-function shuffleDeck(deck: CardState[]) {
+function shuffleDeck(deck: CardType[]) {
   const max = deck.length;
   for (let k = 0; k < 100; k++) {
     const a = getRandomInt(max);
@@ -62,7 +58,7 @@ function shuffleDeck(deck: CardState[]) {
   }
 }
 
-function getCard(deck: CardState[], id: string): CardState {
+function getCard(deck: CardType[], id: string): CardType {
   for (let card of deck) {
     if (card.id === id) {
       return card;
@@ -71,7 +67,7 @@ function getCard(deck: CardState[], id: string): CardState {
   throw new Error("invalid card id sent to getCard");
 }
 
-function validateGroup(possibleGroup: CardState[]) {
+function validateGroup(possibleGroup: CardType[]) {
   let isValid = true;
   for (let i in possibleGroup[0].vector) {
     // in which I write the entire game in 1 line of code
@@ -87,7 +83,7 @@ function validateGroup(possibleGroup: CardState[]) {
   return isValid;
 }
 
-function removeCards(deck: CardState[], matchedGroup: CardState[]) {
+function removeCards(deck: CardType[], matchedGroup: CardType[]) {
   const newDeck = [...deck];
   return newDeck.filter((card) => {
     return !matchedGroup.includes(card);
@@ -95,7 +91,7 @@ function removeCards(deck: CardState[], matchedGroup: CardState[]) {
 }
 
 export function GameStateProvider({ children }: { children: ReactNode }) {
-  const [deck, setDeck] = useState<CardState[]>(() => {
+  const [deck, setDeck] = useState<CardType[]>(() => {
     const baseDeck = DEFAULT_DECK;
     const tempDeck = addAttribute(3, baseDeck);
     // make the type checker happy since addAttribute is recursive
@@ -103,8 +99,8 @@ export function GameStateProvider({ children }: { children: ReactNode }) {
     shuffleDeck(tempDeck);
     return tempDeck;
   });
-  const [currentGroup, setCurrentGroup] = useState<CardState[]>([]);
-  const [invalidGroup, setInvalidGroup] = useState<CardState[]>([]);
+  const [currentGroup, setCurrentGroup] = useState<CardType[]>([]);
+  const [invalidGroup, setInvalidGroup] = useState<CardType[]>([]);
 
   function handleCardClick(id: string) {
     const newCurrentGroup = [...currentGroup, getCard(deck, id)];

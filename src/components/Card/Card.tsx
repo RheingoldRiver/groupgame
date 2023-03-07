@@ -1,7 +1,8 @@
 import clsx from "clsx";
 import { range } from "lodash";
 import { useContext } from "react";
-import { CardState, GameStateContext } from "../GameStateProvider/GameStateProvider";
+import { GameStateContext } from "../GameStateProvider/GameStateProvider";
+import { CardType } from "./cardTypes";
 
 const CARD_IMAGES = [
   ["bg-[url(assets/card_00.png)]", "bg-[url(assets/card_01.png)]", "bg-[url(assets/card_02.png)]"],
@@ -15,7 +16,7 @@ const IMAGE_FILTERS = [
   "invert(17%) sepia(76%) saturate(2985%) hue-rotate(224deg) brightness(94%) contrast(95%)",
 ];
 
-export const Card = ({ card }: { card: CardState }) => {
+export const Card = ({ card }: { card: CardType }) => {
   const { handleCardClick, currentGroup, invalidGroup } = useContext(GameStateContext);
   const vector = card.vector;
   return (
