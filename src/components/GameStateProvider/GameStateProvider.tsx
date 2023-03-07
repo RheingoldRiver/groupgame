@@ -58,27 +58,27 @@ function shuffleDeck(deck: CardType[]) {
   }
 }
 
-function getCard(deck: CardType[], id: string): CardType {
+function getCard(deck: CardType[], id: string): CardType | undefined {
   for (let card of deck) {
     if (card.id === id) {
       return card;
     }
   }
-  throw new Error("invalid card id sent to getCard");
+  return undefined;
 }
 
 function validateGroup(possibleGroup: CardType[]) {
   let isValid = true;
   for (let i in possibleGroup[0].vector) {
     // in which I write the entire game in 1 line of code
+    // prettier-ignore
     if (
       possibleGroup.reduce((sum, card) => {
         return sum + card.vector[i];
-      }, 0) %
-        3 !==
-      0
-    )
+      }, 0) % 3 !== 0
+    ) {
       isValid = false;
+    }
   }
   return isValid;
 }
@@ -102,8 +102,20 @@ export function GameStateProvider({ children }: { children: ReactNode }) {
   const [currentGroup, setCurrentGroup] = useState<CardType[]>([]);
   const [invalidGroup, setInvalidGroup] = useState<CardType[]>([]);
 
-  function handleCardClick(id: string) {
-    const newCurrentGroup = [...currentGroup, getCard(deck, id)];
+  function handleCardClick(card: CardType) {
+    // Since we instantly remove any card you click on twice, we don't have to
+    // worry about any case of potentially adding the same card 3x in the
+    // validation function. Hooray!
+    if (getCard(currentGroup, card.id) !== undefined) {
+      setCurrentGroup(
+        currentGroup.filter((c) => {
+          return c.id !== card.id;
+        })
+      );
+      return;
+    }
+    const newCurrentGroup = [...currentGroup, card];
+
     // Don't remove from deck yet, we'll do that when we complete a group
     if (newCurrentGroup.length <= 2) {
       setCurrentGroup(newCurrentGroup);
