@@ -21,13 +21,27 @@ export const DEFAULT_DECK = [
 ];
 
 export interface InvalidCard {
-    card: CardType;
-    destroy: Function;
+  card: CardType;
+  destroy: Function;
 }
 
-export const CARDS_PER_GROUP = {
-    set: 3,
-    planet: 4,
+export enum Mode {
+  Set = 0,
+  Planet = 1,
 }
 
-export const DEFAULT_MODE = "set";
+export enum Orientation {
+  Vertical = 0,
+  Horizontal = 1,
+}
+
+export const MODE_SETTINGS = {
+  [Mode.Set]: {
+    groupSize: 3,
+    boardSize: 12,
+  },
+  [Mode.Planet]: {
+    groupSize: 4,
+    boardSize: 12,
+  },
+};

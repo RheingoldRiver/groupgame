@@ -1,4 +1,4 @@
-import { range } from "lodash";
+import { range, toNumber } from "lodash";
 import { getRandomInt } from "../../utils";
 import { CardType } from "../Card/cardTypes";
 
@@ -43,11 +43,31 @@ export function getCard(deck: CardType[], id: string): CardType | undefined {
   return undefined;
 }
 
+export function removeCards(deck: CardType[], matchedGroup: CardType[], boardSize: number, groupSize: number) {
+  const newDeck = [];
+  let j = 0;
+  for (let i in deck) {
+    let card = deck[i];
+    if (toNumber(i) >= boardSize + groupSize) {
+      newDeck.push(card);
+    } else if (toNumber(i) >= boardSize) {
+      continue;
+    } else if (!matchedGroup.includes(card)) {
+      newDeck.push(card);
+    } else {
+      // TODO: Handle end of game gracefully here
+      newDeck.push(deck[boardSize + j]);
+      j++;
+    }
+  }
+  return newDeck;
+}
+
+// prettier-ignore
 export function validateGroup(possibleGroup: CardType[]) {
   let isValid = true;
   for (let i in possibleGroup[0].vector) {
     // in which I write the entire game in 1 line of code
-    // prettier-ignore
     if (
       possibleGroup.reduce((sum, card) => {
         return sum + card.vector[i];
@@ -57,11 +77,4 @@ export function validateGroup(possibleGroup: CardType[]) {
     }
   }
   return isValid;
-}
-
-export function removeCards(deck: CardType[], matchedGroup: CardType[]) {
-  const newDeck = [...deck];
-  return newDeck.filter((card) => {
-    return !matchedGroup.includes(card);
-  });
 }
