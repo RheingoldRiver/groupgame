@@ -1,6 +1,9 @@
+import { Mode } from "./gameStateConstants";
 import { range, toNumber } from "lodash";
 import { getRandomInt } from "../../utils";
 import { CardType } from "../Card/cardTypes";
+
+// Deck construction
 
 export function addAttribute(numLeft: number, deck: CardType[]): CardType[] {
   if (numLeft === 0) {
@@ -34,6 +37,8 @@ export function shuffleDeck(deck: CardType[]) {
   }
 }
 
+// Utility
+
 export function getCard(deck: CardType[], id: string): CardType | undefined {
   for (let card of deck) {
     if (card.id === id) {
@@ -42,6 +47,13 @@ export function getCard(deck: CardType[], id: string): CardType | undefined {
   }
   return undefined;
 }
+
+export function board(deck: CardType[], boardSize: number): CardType[] {
+  const board = deck.slice(0, boardSize);
+  return board;
+}
+
+// Gameplay
 
 export function removeCards(deck: CardType[], matchedGroup: CardType[], boardSize: number, groupSize: number) {
   const newDeck = [];
@@ -63,18 +75,35 @@ export function removeCards(deck: CardType[], matchedGroup: CardType[], boardSiz
   return newDeck;
 }
 
-// prettier-ignore
-export function validateGroup(possibleGroup: CardType[]) {
+export function validateGroup(possibleGroup: CardType[], mode: Mode) {
   let isValid = true;
-  for (let i in possibleGroup[0].vector) {
-    // in which I write the entire game in 1 line of code
-    if (
+  if (mode == Mode.Set) {
+    for (let i in possibleGroup[0].vector) {
+      // in which I write the entire game in 1 line of code
+      // prettier-ignore
+      if (
       possibleGroup.reduce((sum, card) => {
         return sum + card.vector[i];
       }, 0) % 3 !== 0
     ) {
       isValid = false;
     }
+    }
   }
   return isValid;
+}
+
+export function findValidGroups(board: CardType[], mode: Mode): CardType[][] {
+  const foundGroups: CardType[][] = [];
+  for (let i = 1; i < board.length - 2; i++) {
+    for (let j = i + 1; j < board.length - 1; j++) {
+      for (let k = j + 1; j < board.length; j++) {
+        const possibleGroup = [board[i], board[j], board[k]];
+        if (validateGroup(possibleGroup, mode)) {
+          foundGroups.push(possibleGroup);
+        }
+      }
+    }
+  }
+  return foundGroups;
 }

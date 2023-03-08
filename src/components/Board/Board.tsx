@@ -4,11 +4,11 @@ import { GameStateContext } from "../GameStateProvider/GameStateProvider";
 import { CardType } from "../Card/cardTypes";
 
 export const Board = ({}: {}) => {
-  const { deck } = useContext(GameStateContext);
+  const { deck, boardSize } = useContext(GameStateContext);
 
   return (
-    <div className="grid grid-rows-3 grid-cols-4 gap-x-3 gap-y-3 max-w-[50rem]">
-      {deck.slice(0, 12).map((card: CardType, i: number) => (
+    <div className="grid grid-rows-3 grid-flow-col gap-x-3 gap-y-3 max-w-[50rem]">
+      {deck.slice(0, boardSize).map((card: CardType, i: number) => (
         <Card key={card.id} card={card}></Card>
       ))}
     </div>

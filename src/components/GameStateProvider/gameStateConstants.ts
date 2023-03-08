@@ -1,19 +1,5 @@
 import { CardType } from "../Card/cardTypes";
 
-interface GameState {
-  deck: CardType[];
-  handleCardClick: Function;
-  currentGroup: CardType[];
-  invalidGroup: InvalidCard[];
-}
-
-export const DEFAULT_GAME_STATE: GameState = {
-  deck: [],
-  handleCardClick: () => {},
-  currentGroup: [],
-  invalidGroup: [],
-};
-
 export const DEFAULT_DECK = [
   { id: crypto.randomUUID(), vector: [0] },
   { id: crypto.randomUUID(), vector: [1] },
@@ -35,13 +21,40 @@ export enum Orientation {
   Horizontal = 1,
 }
 
+export enum HandleNoGroups {
+  Auto = 0,
+  Manual = 1,
+}
+
 export const MODE_SETTINGS = {
   [Mode.Set]: {
     groupSize: 3,
     boardSize: 12,
+    incrementSize: 3,
   },
   [Mode.Planet]: {
     groupSize: 4,
     boardSize: 12,
+    incrementSize: 3,
   },
+};
+
+interface GameState {
+  deck: CardType[];
+  boardSize: number;
+  handleCardClick: Function;
+  currentGroup: CardType[];
+  invalidGroup: InvalidCard[];
+  getHint: Function;
+  hint: CardType | undefined;
+}
+
+export const DEFAULT_GAME_STATE: GameState = {
+  deck: [],
+  boardSize: MODE_SETTINGS[Mode.Set].boardSize,
+  handleCardClick: () => {},
+  currentGroup: [],
+  invalidGroup: [],
+  getHint: () => {},
+  hint: undefined,
 };
