@@ -34,14 +34,14 @@ export const Card = ({ card }: { card: CardType }) => {
       }}
     >
       {range(vector[2] + 1).map((i) => (
-        <img
-          src={`src/assets/card_${vector[0]}${vector[1]}.png`}
+        <div
           key={i}
           className={clsx("w-[118px] h-[46px] bg-no-repeat bg-cover")}
           style={{
             filter: IMAGE_FILTERS[vector[3]],
+            background: `url(src/assets/card_${vector[0]}${vector[1]}.png)`,
           }}
-        ></img>
+        ></div>
       ))}
     </div>
   );
