@@ -5,7 +5,7 @@ import { GameStateContext } from "../GameStateProvider/GameStateProvider";
 import { CardType } from "./cardTypes";
 
 const CARD_IMAGES = [
-  ["bg-[]", "bg-[url(assets/card_01.png)]", "bg-[url(assets/card_02.png)]"],
+  ["bg-[url(assets/card_00.png)]", "bg-[url(assets/card_01.png)]", "bg-[url(assets/card_02.png)]"],
   ["bg-[url(assets/card_10.png)]", "bg-[url(assets/card_11.png)]", "bg-[url(assets/card_12.png)]"],
   ["bg-[url(assets/card_20.png)]", "bg-[url(assets/card_21.png)]", "bg-[url(assets/card_22.png)]"],
 ];
