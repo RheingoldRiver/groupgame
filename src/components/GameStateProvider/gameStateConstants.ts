@@ -47,6 +47,8 @@ interface GameState {
   invalidGroup: InvalidCard[];
   getHint: Function;
   hint: CardType | undefined;
+  newGame: Function;
+  startOver: Function;
 }
 
 export const DEFAULT_GAME_STATE: GameState = {
@@ -57,4 +59,6 @@ export const DEFAULT_GAME_STATE: GameState = {
   invalidGroup: [],
   getHint: () => {},
   hint: undefined,
+  newGame: () => {},
+  startOver: () => {},
 };

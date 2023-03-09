@@ -1,4 +1,4 @@
-import { Mode } from "./gameStateConstants";
+import { DEFAULT_DECK, Mode } from "./gameStateConstants";
 import { range, toNumber } from "lodash";
 import { getRandomInt } from "../../utils";
 import { CardType } from "../Card/cardTypes";
@@ -55,6 +55,15 @@ export function board(deck: CardType[], boardSize: number): CardType[] {
 
 // Gameplay
 
+export function buildDeck(numAttributes: number, mode: Mode) {
+  const baseDeck = DEFAULT_DECK;
+  const tempDeck = addAttribute(numAttributes - 1, baseDeck);
+  // make the type checker happy since addAttribute is recursive
+  if (tempDeck === undefined) return baseDeck;
+  shuffleDeck(tempDeck);
+  return tempDeck;
+}
+
 export function removeCards(deck: CardType[], matchedGroup: CardType[], boardSize: number, groupSize: number) {
   const newDeck = [];
   let j = 0;
@@ -85,9 +94,7 @@ export function validateGroup(possibleGroup: CardType[], mode: Mode) {
       possibleGroup.reduce((sum, card) => {
         return sum + card.vector[i];
       }, 0) % 3 !== 0
-    ) {
-      isValid = false;
-    }
+    ) { isValid = false; }
     }
   }
   return isValid;
