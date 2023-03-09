@@ -31,6 +31,7 @@ export function GameStateProvider({ children }: { children: ReactNode }) {
     return MODE_SETTINGS[mode].boardSize;
   });
   const [hint, setHint] = useState<CardType | undefined>(undefined);
+  const [answer, setAnswer] = useState<CardType[]>([]);
   const [turn, setTurn] = useState<number>(0);
   const [endOfGame, setEndOfGame] = useState<boolean>(false);
 
@@ -76,6 +77,12 @@ export function GameStateProvider({ children }: { children: ReactNode }) {
       newCurrentGroup.push(hint);
       setHint(undefined);
     }
+
+    setAnswer((prev) => {
+      return prev.filter((c) => {
+        return c.id !== card.id;
+      });
+    });
 
     // Don't remove from deck yet, we'll do that when we complete a group
     if (newCurrentGroup.length <= cardsPerGroup - 1) {
@@ -154,12 +161,39 @@ export function GameStateProvider({ children }: { children: ReactNode }) {
       alert("No sets here! Why don't you play on auto-set-deal mode?");
       return;
     }
+    console.log(presentGroups[0]);
     setHint(presentGroups[0][0]);
+  }
+
+  function getAnswer() {
+    const presentGroups = findValidGroups(board(deck, boardSize), mode);
+    if (presentGroups.length === 0) {
+      alert("No sets here! Why don't you play on auto-set-deal mode?");
+      return;
+    }
+    console.log(presentGroups[0]);
+    setAnswer(presentGroups[0]);
   }
 
   return (
     <GameStateContext.Provider
-      value={{ deck, boardSize, handleCardClick, currentGroup, invalidGroup, getHint, hint, newGame, startOver }}
+      value={{
+        deck,
+        boardSize,
+        handleCardClick,
+        currentGroup,
+        invalidGroup,
+        hint,
+        getHint,
+        answer,
+        getAnswer,
+        newGame,
+        startOver,
+        mode,
+        setMode,
+        orientation,
+        setOrientation,
+      }}
     >
       {children}
     </GameStateContext.Provider>

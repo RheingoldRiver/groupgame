@@ -87,35 +87,94 @@ export function removeCards(deck: CardType[], matchedGroup: CardType[], boardSiz
 export function validateGroup(possibleGroup: CardType[], mode: Mode) {
   let isValid = true;
   if (mode == Mode.Set) {
-    for (let i in possibleGroup[0].vector) {
-      // in which I write the entire game in 1 line of code
-      // prettier-ignore
-      if (
-      possibleGroup.reduce((sum, card) => {
-        return sum + card.vector[i];
-      }, 0) % 3 !== 0
-    ) { isValid = false; }
-    }
+    isValid = validateSet(possibleGroup);
+  } else if (mode == Mode.Planet) {
+    isValid = validatePlanet(possibleGroup);
   }
   return isValid;
 }
 
+function validateSet(possibleGroup: CardType[]) {
+  let isValid = true;
+  // we don't know the length of the card, but we can assume all cards have the same length
+  for (let i in possibleGroup[0].vector) {
+    // in which I write the entire game in 1 line of code
+    // prettier-ignore
+    if (
+      possibleGroup.reduce((sum, card) => {
+        return sum + card.vector[i];
+      }, 0) % 3 !== 0
+    ) { isValid = false; }
+  }
+  return isValid;
+}
+
+// for testing
+export function validatePlanet(possibleGroup: CardType[]) {
+  let firstValid = true;
+  let secondValid = true;
+  let thirdValid = true;
+  let pg = possibleGroup.map((c) => c.vector);
+  // we don't know the length of the card, but we can assume all cards have the same length
+  for (let i in possibleGroup[0].vector) {
+    // These are the only possibilities. 4! = 24 but the subtraction is commutative in this
+    // case (since 0 mod 3) and addition is always communtative so 24 / (2 * 2 * 2)
+    // = 24 / 8 = 3.
+    if (pg[0][i] + pg[1][i] - pg[2][i] - (pg[3][i] % 3) !== 0) {
+      firstValid = false;
+    }
+    if (pg[0][i] + pg[2][i] - pg[1][i] - (pg[3][i] % 3) !== 0) {
+      secondValid = false;
+    }
+    if (pg[0][i] + pg[3][i] - pg[1][i] - (pg[2][i] % 3) !== 0) {
+      thirdValid = false;
+    }
+  }
+  return firstValid || secondValid || thirdValid;
+}
+
 export function findValidGroups(board: CardType[], mode: Mode): CardType[][] {
-  const foundGroups: CardType[][] = [];
   // console.log(board.length);
+  if (mode === Mode.Set) {
+    return findValidSets(board);
+  } else if (mode === Mode.Planet) {
+    return findValidPlanets(board);
+  }
+  throw new Error("Unsupported Mode");
+}
+
+function findValidSets(board: CardType[]) {
+  const foundGroups: CardType[][] = [];
   for (let i = 0; i < board.length - 2; i++) {
     for (let j = i + 1; j < board.length - 1; j++) {
       for (let k = j + 1; k < board.length; k++) {
         const possibleGroup = [board[i], board[j], board[k]];
-        // console.log("i" + i);
-        // console.log("j" + j);
-        // console.log("k" + k);
-        // console.log(board[i]);
-        // console.log(board[j]);
-        // console.log(board[k]);
-        if (validateGroup(possibleGroup, mode)) {
-          // console.log(possibleGroup);
+        if (validateSet(possibleGroup)) {
           foundGroups.push(possibleGroup);
+        }
+      }
+    }
+  }
+  return foundGroups;
+}
+
+function findValidPlanets(board: CardType[]) {
+  const foundGroups: CardType[][] = [];
+  for (let i = 0; i < board.length - 3; i++) {
+    for (let j = i + 1; j < board.length - 2; j++) {
+      for (let k = j + 1; k < board.length - 1; k++) {
+        for (let l = k + 1; l < board.length; l++) {
+          const possibleGroup = [board[i], board[j], board[k], board[l]];
+          // console.log("i" + i);
+          // console.log("j" + j);
+          // console.log("k" + k);
+          // console.log(board[i]);
+          // console.log(board[j]);
+          // console.log(board[k]);
+          if (validatePlanet(possibleGroup)) {
+            // console.log(possibleGroup);
+            foundGroups.push(possibleGroup);
+          }
         }
       }
     }

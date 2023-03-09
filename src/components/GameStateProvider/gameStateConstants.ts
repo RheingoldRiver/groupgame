@@ -1,3 +1,4 @@
+import { Dispatch, SetStateAction } from "react";
 import { CardType } from "../Card/cardTypes";
 
 export const DEFAULT_DECK = [
@@ -12,18 +13,18 @@ export interface InvalidCard {
 }
 
 export enum Mode {
-  Set = 0,
-  Planet = 1,
+  Set = "Set",
+  Planet = "Planet",
 }
 
 export enum Orientation {
-  Vertical = 0,
-  Horizontal = 1,
+  Vertical = "Vertical",
+  Horizontal = "Horizontal",
 }
 
 export enum HandleNoGroups {
-  Auto = 0,
-  Manual = 1,
+  Auto = "Auto",
+  Manual = "Manual",
 }
 
 export const MODE_SETTINGS = {
@@ -45,10 +46,16 @@ interface GameState {
   handleCardClick: Function;
   currentGroup: CardType[];
   invalidGroup: InvalidCard[];
-  getHint: Function;
   hint: CardType | undefined;
+  getHint: Function;
+  answer: CardType[];
+  getAnswer: Function;
   newGame: Function;
   startOver: Function;
+  mode: Mode;
+  setMode: Dispatch<SetStateAction<Mode>>;
+  orientation: Orientation;
+  setOrientation: Dispatch<SetStateAction<Orientation>>;
 }
 
 export const DEFAULT_GAME_STATE: GameState = {
@@ -57,8 +64,14 @@ export const DEFAULT_GAME_STATE: GameState = {
   handleCardClick: () => {},
   currentGroup: [],
   invalidGroup: [],
-  getHint: () => {},
   hint: undefined,
+  getHint: () => {},
+  answer: [],
+  getAnswer: () => {},
   newGame: () => {},
   startOver: () => {},
+  mode: Mode.Set,
+  setMode: () => {},
+  orientation: Orientation.Vertical,
+  setOrientation: () => {},
 };
