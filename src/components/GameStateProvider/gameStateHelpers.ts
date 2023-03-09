@@ -109,7 +109,7 @@ function validateSet(possibleGroup: CardType[]) {
   return isValid;
 }
 
-// for testing
+// export for testing
 export function validatePlanet(possibleGroup: CardType[]) {
   let firstValid = true;
   let secondValid = true;
