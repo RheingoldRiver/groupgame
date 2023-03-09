@@ -2,7 +2,6 @@ import { createContext, ReactNode, useEffect } from "react";
 import { useState } from "react";
 import { CardType } from "../Card/cardTypes";
 import {
-  DEFAULT_DECK,
   DEFAULT_GAME_STATE,
   HandleNoGroups,
   InvalidCard,
@@ -10,15 +9,7 @@ import {
   MODE_SETTINGS,
   Orientation,
 } from "./gameStateConstants";
-import {
-  addAttribute,
-  board,
-  findValidGroups,
-  getCard,
-  removeCards,
-  shuffleDeck,
-  validateGroup,
-} from "./gameStateHelpers";
+import { board, buildDeck, findValidGroups, getCard, removeCards, validateGroup } from "./gameStateHelpers";
 
 export const GameStateContext = createContext(DEFAULT_GAME_STATE);
 
@@ -31,18 +22,34 @@ export function GameStateProvider({ children }: { children: ReactNode }) {
   const [numAttributes, setNumAttributes] = useState<number>(4);
   const [handleNoGroups, setHandleNoGroups] = useState<HandleNoGroups>(HandleNoGroups.Auto);
   const [deck, setDeck] = useState<CardType[]>(() => {
-    const baseDeck = DEFAULT_DECK;
-    const tempDeck = addAttribute(numAttributes - 1, baseDeck);
-    // make the type checker happy since addAttribute is recursive
-    if (tempDeck === undefined) return baseDeck;
-    console.log(findValidGroups(tempDeck, mode));
-    shuffleDeck(tempDeck);
-    return tempDeck;
+    return buildDeck(numAttributes, mode);
+  });
+  const [thisDeck, setThisDeck] = useState<CardType[]>(() => {
+    return deck;
   });
   const [boardSize, setBoardSize] = useState<number>(() => {
     return MODE_SETTINGS[mode].boardSize;
   });
   const [hint, setHint] = useState<CardType | undefined>(undefined);
+  const [turn, setTurn] = useState<number>(0);
+
+  function setStartOfGame() {
+    setCurrentGroup([]);
+    setInvalidGroup([]);
+    setHint(undefined);
+    setBoardSize(MODE_SETTINGS[mode].boardSize);
+  }
+
+  function newGame() {
+    setStartOfGame();
+    const newDeck = buildDeck(numAttributes, mode);
+    setDeck(newDeck);
+    setThisDeck(newDeck);
+  }
+
+  function startOver() {
+    setDeck(thisDeck);
+  }
 
   function handleCardClick(card: CardType) {
     const cardsPerGroup = MODE_SETTINGS[mode].groupSize;
@@ -77,6 +84,7 @@ export function GameStateProvider({ children }: { children: ReactNode }) {
       const newDeck = removeCards(deck, newCurrentGroup, boardSize, cardsPerGroup);
       setCurrentGroup([]);
       setDeck(newDeck);
+      setTurn(turn + 1);
     } else {
       setInvalidGroup(
         newCurrentGroup.map((c) => {
@@ -104,10 +112,12 @@ export function GameStateProvider({ children }: { children: ReactNode }) {
   }, [invalidGroup]);
 
   useEffect(() => {
+    // Adjust the board size if no sets are found
     const incrementSize = MODE_SETTINGS[mode].incrementSize;
     if (
       boardSize > MODE_SETTINGS[mode].boardSize &&
-      findValidGroups(board(deck, boardSize - incrementSize), mode).length > 0
+      findValidGroups(board(deck, boardSize - incrementSize), mode).length > 0 &&
+      turn > 0
     ) {
       // this should just tell it not to deal more cards next time
       setBoardSize(boardSize - incrementSize);
@@ -130,7 +140,9 @@ export function GameStateProvider({ children }: { children: ReactNode }) {
   }
 
   return (
-    <GameStateContext.Provider value={{ deck, boardSize, handleCardClick, currentGroup, invalidGroup, getHint, hint }}>
+    <GameStateContext.Provider
+      value={{ deck, boardSize, handleCardClick, currentGroup, invalidGroup, getHint, hint, newGame, startOver }}
+    >
       {children}
     </GameStateContext.Provider>
   );
