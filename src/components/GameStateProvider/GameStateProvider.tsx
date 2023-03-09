@@ -60,6 +60,14 @@ export function GameStateProvider({ children }: { children: ReactNode }) {
     }
     const newCurrentGroup = [...currentGroup, card];
 
+    // Deal with pre-existing hint
+    if (hint?.id === card.id) {
+      setHint(undefined);
+    } else if (hint !== undefined) {
+      newCurrentGroup.push(hint);
+      setHint(undefined);
+    }
+
     // Don't remove from deck yet, we'll do that when we complete a group
     if (newCurrentGroup.length <= cardsPerGroup - 1) {
       setCurrentGroup(newCurrentGroup);
@@ -114,13 +122,10 @@ export function GameStateProvider({ children }: { children: ReactNode }) {
 
   function getHint() {
     const presentGroups = findValidGroups(board(deck, boardSize), mode);
-    console.log(board(deck, boardSize));
     if (presentGroups.length === 0) {
       alert("No sets here! Why don't you play on auto-set-deal mode?");
       return;
     }
-    console.log(presentGroups);
-    console.log(presentGroups[0][0]);
     setHint(presentGroups[0][0]);
   }
 

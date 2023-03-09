@@ -1,20 +1,59 @@
-import { board } from "./gameStateHelpers";
+import { Mode } from "./gameStateConstants";
+import { expect, it } from "vitest";
+import { board, findValidGroups } from "./gameStateHelpers";
 
-if (import.meta.vitest) {
-  const { it, expect } = import.meta.vitest;
-  it("board", () => {
-    expect(
-      board(
-        [
-          { id: "1", vector: [0] },
-          { id: "2", vector: [1] },
-          { id: "3", vector: [2] },
-        ],
-        2
-      )
-    ).toBe([
-      { id: "1", vector: [0] },
-      { id: "2", vector: [1] },
-    ]);
-  });
-}
+it("board", () => {
+  expect(
+    board(
+      [
+        { id: "1", vector: [0] },
+        { id: "2", vector: [1] },
+        { id: "3", vector: [2] },
+        { id: "4", vector: [2] },
+      ],
+      2
+    )
+  ).toStrictEqual([
+    { id: "1", vector: [0] },
+    { id: "2", vector: [1] },
+  ]);
+});
+
+it("findValidGroups", () => {
+  expect(
+    findValidGroups(
+      [
+        { id: "1", vector: [0, 0, 0, 0] },
+        { id: "2", vector: [0, 0, 0, 1] },
+        { id: "3", vector: [1, 0, 1, 0] },
+        { id: "4", vector: [1, 1, 0, 0] },
+        { id: "5", vector: [0, 0, 0, 2] },
+        { id: "6", vector: [1, 0, 2, 0] },
+        { id: "7", vector: [1, 2, 0, 0] },
+      ],
+      Mode.Set
+    )
+  ).toStrictEqual([
+    [
+      { id: "1", vector: [0, 0, 0, 0] },
+      { id: "2", vector: [0, 0, 0, 1] },
+      { id: "5", vector: [0, 0, 0, 2] },
+    ],
+  ]);
+  expect(
+    findValidGroups(
+      [
+        { id: "1", vector: [0, 0, 0, 0] },
+        { id: "2", vector: [0, 0, 0, 1] },
+        { id: "5", vector: [0, 0, 0, 2] },
+      ],
+      Mode.Set
+    )
+  ).toStrictEqual([
+    [
+      { id: "1", vector: [0, 0, 0, 0] },
+      { id: "2", vector: [0, 0, 0, 1] },
+      { id: "5", vector: [0, 0, 0, 2] },
+    ],
+  ]);
+});

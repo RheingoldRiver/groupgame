@@ -19,7 +19,6 @@ const IMAGE_FILTERS = [
 export const Card = ({ card }: { card: CardType }) => {
   const { handleCardClick, currentGroup, invalidGroup, hint } = useContext(GameStateContext);
   const vector = card.vector;
-
   return (
     <div
       data-id={card.id}
@@ -28,7 +27,7 @@ export const Card = ({ card }: { card: CardType }) => {
         "border-slate-600 rounded-lg border-solid border-2 m-[2px] p-3",
         currentGroup.includes(card) && "!border-4 !border-green-500 !m-0",
         invalidGroup.map((invalidCard) => invalidCard.card).includes(card) && "!border-4 !border-red-500 !m-0",
-        hint?.id === card.id && "!border-green-700"
+        hint?.id === card.id && "!border-green-500 border-4 !m-0 border-dashed"
       )}
       onClick={() => {
         handleCardClick(card);

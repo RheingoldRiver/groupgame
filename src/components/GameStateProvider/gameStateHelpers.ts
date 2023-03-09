@@ -95,11 +95,19 @@ export function validateGroup(possibleGroup: CardType[], mode: Mode) {
 
 export function findValidGroups(board: CardType[], mode: Mode): CardType[][] {
   const foundGroups: CardType[][] = [];
-  for (let i = 1; i < board.length - 2; i++) {
+  // console.log(board.length);
+  for (let i = 0; i < board.length - 2; i++) {
     for (let j = i + 1; j < board.length - 1; j++) {
-      for (let k = j + 1; j < board.length; j++) {
+      for (let k = j + 1; k < board.length; k++) {
         const possibleGroup = [board[i], board[j], board[k]];
+        // console.log("i" + i);
+        // console.log("j" + j);
+        // console.log("k" + k);
+        // console.log(board[i]);
+        // console.log(board[j]);
+        // console.log(board[k]);
         if (validateGroup(possibleGroup, mode)) {
+          // console.log(possibleGroup);
           foundGroups.push(possibleGroup);
         }
       }

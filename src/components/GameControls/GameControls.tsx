@@ -4,7 +4,6 @@ import { GameStateContext } from "../GameStateProvider/GameStateProvider";
 
 export const GameToolbar = () => {
   const { getHint } = useContext(GameStateContext);
-  console.log(getHint);
   return (
     <Toolbar.Root>
       <Toolbar.Button
