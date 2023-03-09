@@ -76,4 +76,58 @@ it("findValidPlanets", () => {
       { id: "4", vector: [1, 1, 1, 1] },
     ])
   ).toEqual(true);
+
+  expect(
+    validatePlanet([
+      { id: "1", vector: [0, 0, 2, 1] },
+      { id: "2", vector: [0, 1, 2, 2] },
+      { id: "3", vector: [0, 0, 2, 2] },
+      { id: "4", vector: [0, 1, 2, 1] },
+    ])
+  ).toEqual(true);
+
+  expect(
+    validatePlanet([
+      { id: "1", vector: [0, 0, 2, 1] },
+      { id: "2", vector: [0, 1, 2, 2] },
+      { id: "4", vector: [0, 1, 2, 1] },
+      { id: "3", vector: [0, 0, 2, 2] },
+    ])
+  ).toEqual(true);
+
+  expect(
+    validatePlanet([
+      { id: "1", vector: [0, 0, 2, 1] },
+      { id: "4", vector: [0, 1, 2, 1] },
+      { id: "2", vector: [0, 1, 2, 2] },
+      { id: "3", vector: [0, 0, 2, 2] },
+    ])
+  ).toEqual(true);
+
+  expect(
+    validatePlanet([
+      { id: "4", vector: [0, 1, 2, 1] },
+      { id: "1", vector: [0, 0, 2, 1] },
+      { id: "2", vector: [0, 1, 2, 2] },
+      { id: "3", vector: [0, 0, 2, 2] },
+    ])
+  ).toEqual(true);
+
+  expect(
+    validatePlanet([
+      { id: "4", vector: [0, 1, 2, 1] },
+      { id: "1", vector: [0, 0, 2, 1] },
+      { id: "3", vector: [0, 0, 2, 2] },
+      { id: "2", vector: [0, 1, 2, 2] },
+    ])
+  ).toEqual(true);
+
+  expect(
+    validatePlanet([
+      { id: "4", vector: [0, 1, 0, 0] },
+      { id: "1", vector: [0, 2, 0, 0] },
+      { id: "3", vector: [0, 0, 1, 0] },
+      { id: "2", vector: [0, 0, 2, 0] },
+    ])
+  ).toEqual(true);
 });

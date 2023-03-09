@@ -120,13 +120,13 @@ export function validatePlanet(possibleGroup: CardType[]) {
     // These are the only possibilities. 4! = 24 but the subtraction is commutative in this
     // case (since 0 mod 3) and addition is always communtative so 24 / (2 * 2 * 2)
     // = 24 / 8 = 3.
-    if (pg[0][i] + pg[1][i] - pg[2][i] - (pg[3][i] % 3) !== 0) {
+    if ((pg[0][i] + pg[1][i] - pg[2][i] - pg[3][i]) % 3 !== 0) {
       firstValid = false;
     }
-    if (pg[0][i] + pg[2][i] - pg[1][i] - (pg[3][i] % 3) !== 0) {
+    if ((pg[0][i] + pg[2][i] - pg[1][i] - pg[3][i]) % 3 !== 0) {
       secondValid = false;
     }
-    if (pg[0][i] + pg[3][i] - pg[1][i] - (pg[2][i] % 3) !== 0) {
+    if ((pg[0][i] + pg[3][i] - pg[1][i] - pg[2][i]) % 3 !== 0) {
       thirdValid = false;
     }
   }
