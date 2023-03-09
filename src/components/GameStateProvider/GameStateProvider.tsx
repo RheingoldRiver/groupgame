@@ -32,16 +32,18 @@ export function GameStateProvider({ children }: { children: ReactNode }) {
   });
   const [hint, setHint] = useState<CardType | undefined>(undefined);
   const [turn, setTurn] = useState<number>(0);
+  const [endOfGame, setEndOfGame] = useState<boolean>(false);
 
-  function setStartOfGame() {
+  function startOfGame() {
     setCurrentGroup([]);
     setInvalidGroup([]);
     setHint(undefined);
     setBoardSize(MODE_SETTINGS[mode].boardSize);
+    setEndOfGame(false);
   }
 
   function newGame() {
-    setStartOfGame();
+    startOfGame();
     const newDeck = buildDeck(numAttributes, mode);
     setDeck(newDeck);
     setThisDeck(newDeck);
@@ -81,6 +83,10 @@ export function GameStateProvider({ children }: { children: ReactNode }) {
       return;
     }
     if (validateGroup(newCurrentGroup, mode)) {
+      if (cardsPerGroup + boardSize > deck.length) {
+        setEndOfGame(true);
+        return;
+      }
       const newDeck = removeCards(deck, newCurrentGroup, boardSize, cardsPerGroup);
       setCurrentGroup([]);
       setDeck(newDeck);
@@ -125,10 +131,22 @@ export function GameStateProvider({ children }: { children: ReactNode }) {
     }
     if (handleNoGroups !== HandleNoGroups.Auto) return;
     if (findValidGroups(board(deck, boardSize), mode).length > 0) return;
+
+    // Make sure the game hasn't reached the end of the deck yet
+    if (boardSize + incrementSize > deck.length) {
+      setEndOfGame(true);
+      return;
+    }
+
     setBoardSize(boardSize + incrementSize);
 
     // put boardSize in deps so we can rerun this again in case we need to lay out 6 cards at a time
   }, [deck, boardSize, mode]);
+
+  useEffect(() => {
+    if (!endOfGame) return;
+    alert("You made it through the deck!");
+  }, [endOfGame]);
 
   function getHint() {
     const presentGroups = findValidGroups(board(deck, boardSize), mode);
