@@ -1,6 +1,6 @@
 import { Mode } from "./gameStateConstants";
 import { expect, it } from "vitest";
-import { board, findValidGroups } from "./gameStateHelpers";
+import { board, findValidGroups, validatePlanet } from "./gameStateHelpers";
 
 it("board", () => {
   expect(
@@ -56,4 +56,24 @@ it("findValidGroups", () => {
       { id: "5", vector: [0, 0, 0, 2] },
     ],
   ]);
+});
+
+it("findValidPlanets", () => {
+  expect(
+    validatePlanet([
+      { id: "1", vector: [2, 1, 0, 2] },
+      { id: "2", vector: [0, 0, 2, 2] },
+      { id: "3", vector: [0, 2, 0, 2] },
+      { id: "4", vector: [2, 1, 2, 2] },
+    ])
+  ).toEqual(false);
+
+  expect(
+    validatePlanet([
+      { id: "1", vector: [0, 1, 0, 2] },
+      { id: "2", vector: [1, 2, 0, 1] },
+      { id: "3", vector: [2, 2, 1, 0] },
+      { id: "4", vector: [1, 1, 1, 1] },
+    ])
+  ).toEqual(true);
 });
