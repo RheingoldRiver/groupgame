@@ -22,17 +22,17 @@ export const AppToolbar = ({ ...rest }) => {
     <Toolbar.Root {...rest} className="space-x-3 mb-2 w-96 flex rounded-md">
       <ToolbarRadioDropdown enumType={Mode} enumCurrent={mode} setter={setMode}>
         <button className={styles.button} aria-label="Change game mode">
-          Game Mode
+          {mode}...
         </button>
       </ToolbarRadioDropdown>
       <ToolbarRadioDropdown enumType={Orientation} enumCurrent={orientation} setter={setOrientation}>
         <button className={styles.button} aria-label="Change card orientation">
-          Orientation
+          {orientation}...
         </button>
       </ToolbarRadioDropdown>
       <ToolbarRadioDropdown enumType={Layout} enumCurrent={layout} setter={setLayout}>
         <button className={styles.button} aria-label="Change board layout">
-          Layout
+          {layout}...
         </button>
       </ToolbarRadioDropdown>
 
