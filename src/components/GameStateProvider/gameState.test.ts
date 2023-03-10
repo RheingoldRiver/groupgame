@@ -130,4 +130,13 @@ it("findValidPlanets", () => {
       { id: "2", vector: [0, 0, 2, 0] },
     ])
   ).toEqual(true);
+
+  expect(
+    validatePlanet([
+      { id: "4", vector: [0, 1, 0, 0] },
+      { id: "1", vector: [0, 1, 0, 2] },
+      { id: "3", vector: [1, 1, 0, 1] },
+      { id: "2", vector: [2, 1, 0, 2] },
+    ])
+  ).toEqual(false);
 });

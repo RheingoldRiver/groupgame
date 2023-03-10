@@ -17,11 +17,6 @@ export enum Mode {
   Planet = "Planet",
 }
 
-export enum Orientation {
-  Vertical = "Vertical",
-  Horizontal = "Horizontal",
-}
-
 export enum HandleNoGroups {
   Auto = "Auto",
   Manual = "Manual",
@@ -54,8 +49,6 @@ interface GameState {
   startOver: Function;
   mode: Mode;
   setMode: Dispatch<SetStateAction<Mode>>;
-  orientation: Orientation;
-  setOrientation: Dispatch<SetStateAction<Orientation>>;
 }
 
 export const DEFAULT_GAME_STATE: GameState = {
@@ -72,6 +65,4 @@ export const DEFAULT_GAME_STATE: GameState = {
   startOver: () => {},
   mode: Mode.Set,
   setMode: () => {},
-  orientation: Orientation.Vertical,
-  setOrientation: () => {},
 };

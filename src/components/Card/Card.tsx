@@ -1,6 +1,7 @@
 import clsx from "clsx";
 import { range } from "lodash";
 import { useContext } from "react";
+import { AppStateContext, Orientation } from "../AppStateProvider/AppStateProvider";
 import { GameStateContext } from "../GameStateProvider/GameStateProvider";
 import { CardType } from "./cardTypes";
 
@@ -18,6 +19,8 @@ const IMAGE_FILTERS = [
 
 export const Card = ({ card }: { card: CardType }) => {
   const { handleCardClick, currentGroup, invalidGroup, hint, answer } = useContext(GameStateContext);
+  const { orientation } = useContext(AppStateContext);
+
   const vector = card.vector;
   return (
     <div
@@ -27,7 +30,8 @@ export const Card = ({ card }: { card: CardType }) => {
         "border-slate-600 rounded-lg border-solid border-2 m-[2px] p-3",
         currentGroup.includes(card) && "!border-4 !border-green-500 !m-0",
         invalidGroup.map((invalidCard) => invalidCard.card).includes(card) && "!border-4 !border-red-500 !m-0",
-        (hint?.id === card.id || answer.includes(card)) && "!border-green-500 border-4 !m-0 border-dashed"
+        (hint?.id === card.id || answer.includes(card)) && "!border-green-500 border-4 !m-0 border-dashed",
+        orientation === Orientation.Horizontal ? "w-36" : ""
       )}
       onClick={() => {
         handleCardClick(card);
@@ -38,6 +42,7 @@ export const Card = ({ card }: { card: CardType }) => {
           key={i}
           className={clsx("w-[118px] h-[46px] bg-no-repeat bg-cover", CARD_IMAGES[vector[0]][vector[1]])}
           style={{
+            // transform: orientation === Orientation.Horizontal ? "rotate(90deg) translate(25%)" : "",
             filter: IMAGE_FILTERS[vector[3]],
           }}
         ></div>
