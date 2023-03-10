@@ -1,14 +1,7 @@
 import { createContext, ReactNode, useEffect } from "react";
 import { useState } from "react";
 import { CardType } from "../Card/cardTypes";
-import {
-  DEFAULT_GAME_STATE,
-  HandleNoGroups,
-  InvalidCard,
-  Mode,
-  MODE_SETTINGS,
-  Orientation,
-} from "./gameStateConstants";
+import { DEFAULT_GAME_STATE, HandleNoGroups, InvalidCard, Mode, MODE_SETTINGS } from "./gameStateConstants";
 import { board, buildDeck, findValidGroups, getCard, removeCards, validateGroup } from "./gameStateHelpers";
 
 export const GameStateContext = createContext(DEFAULT_GAME_STATE);
@@ -17,7 +10,6 @@ export function GameStateProvider({ children }: { children: ReactNode }) {
   const [currentGroup, setCurrentGroup] = useState<CardType[]>([]);
   const [invalidGroup, setInvalidGroup] = useState<InvalidCard[]>([]);
   const [mode, setMode] = useState<Mode>(Mode.Set);
-  const [orientation, setOrientation] = useState<Orientation>(Orientation.Vertical);
   const [invalidDelay, setInvalidDelay] = useState<number>(2.5);
   const [numAttributes, setNumAttributes] = useState<number>(4);
   const [handleNoGroups, setHandleNoGroups] = useState<HandleNoGroups>(HandleNoGroups.Auto);
@@ -34,6 +26,10 @@ export function GameStateProvider({ children }: { children: ReactNode }) {
   const [answer, setAnswer] = useState<CardType[]>([]);
   const [turn, setTurn] = useState<number>(0);
   const [endOfGame, setEndOfGame] = useState<boolean>(false);
+
+  useEffect(() => {
+    document.title = `Playing ${mode} | Group Game, the game of 0 mod 3 (a finite simple group)!`;
+  }, [mode]);
 
   function startOfGame() {
     setCurrentGroup([]);
@@ -191,8 +187,6 @@ export function GameStateProvider({ children }: { children: ReactNode }) {
         startOver,
         mode,
         setMode,
-        orientation,
-        setOrientation,
       }}
     >
       {children}
