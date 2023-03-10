@@ -3,13 +3,13 @@ import { Card } from "../Card/Card";
 import { GameStateContext } from "../GameStateProvider/GameStateProvider";
 import { CardType } from "../Card/cardTypes";
 import clsx from "clsx";
-import { AppStateContext, Layout, Orientation } from "../AppStateProvider/AppStateProvider";
+import { AppStateContext, Layout } from "../AppStateProvider/AppStateProvider";
 
 export const Board = ({ ...rest }) => {
   const { deck, boardSize } = useContext(GameStateContext);
-  const { orientation, layout } = useContext(AppStateContext);
+  const { layout } = useContext(AppStateContext);
   return (
-    <div {...rest} className={clsx("block h-min", orientation === Orientation.Horizontal && "rotate-90")}>
+    <div {...rest} className={clsx("block h-min")}>
       <div
         className={clsx(
           "grid gap-x-3 gap-y-3 ",

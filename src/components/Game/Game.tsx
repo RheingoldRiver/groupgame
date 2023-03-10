@@ -8,7 +8,7 @@ export const Game = ({}: {}) => {
   const { mode } = useContext(GameStateContext);
   return (
     <div
-      className="grid justify-center py-4 w-full grid-cols-[auto_max-content_auto]"
+      className="grid justify-center py-4 w-full h-min grid-cols-[auto_max-content_auto]"
       style={{
         gridTemplateAreas: `". modeText ."". gameToolbar ." ". board ." ". appToolbar ."`,
       }}
