@@ -72,18 +72,18 @@ export function takePlayerFoundGroups(
   didDecrement: boolean
 ) {
   const newDeck = [];
-  let j = 0;
   let newSetIndices = range(groupSize);
   if (didDecrement) {
     boardSize = boardSize - groupSize;
-    let j = 0;
+    let k = 0;
     for (let i = boardSize; i < boardSize + groupSize; i++) {
       if (matchedGroup.includes(deck[i])) {
-        newSetIndices = newSetIndices.filter((item) => item != j);
+        newSetIndices = newSetIndices.filter((item) => item != k);
       }
-      j++;
+      k++;
     }
   }
+  let j = 0;
   for (let i in deck) {
     let card = deck[i];
     if (toNumber(i) >= boardSize + groupSize) {
