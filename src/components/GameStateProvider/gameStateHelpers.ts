@@ -64,20 +64,46 @@ export function buildDeck(numAttributes: number, mode: Mode) {
   return tempDeck;
 }
 
-export function removeCards(deck: CardType[], matchedGroup: CardType[], boardSize: number, groupSize: number) {
+export function takePlayerFoundGroups(
+  deck: CardType[],
+  matchedGroup: CardType[],
+  boardSize: number,
+  groupSize: number,
+  didDecrement: boolean
+) {
   const newDeck = [];
   let j = 0;
+  let newSetIndices = [0, 1, 2];
+  if (didDecrement) {
+    boardSize = boardSize - groupSize;
+    let j = 0;
+    console.log(matchedGroup);
+    console.log("kittens");
+    console.log(boardSize);
+    for (let i = boardSize; i < boardSize + groupSize; i++) {
+      console.log(deck[i]);
+      console.log("deck[i]");
+      if (matchedGroup.includes(deck[i])) {
+        newSetIndices = newSetIndices.filter((item) => item != j);
+      }
+      j++;
+    }
+  }
+  console.log(newSetIndices);
   for (let i in deck) {
     let card = deck[i];
     if (toNumber(i) >= boardSize + groupSize) {
+      // rest of the deck
       newDeck.push(card);
     } else if (toNumber(i) >= boardSize) {
+      // skip the immediate next groupSize cards that we've already claimed in the last step
       continue;
     } else if (!matchedGroup.includes(card)) {
+      // the cards that we didn't pick up this turn
       newDeck.push(card);
     } else {
-      // TODO: Handle end of game gracefully here
-      newDeck.push(deck[boardSize + j]);
+      // replace the cards in this Group with the immediate next cards in the deck
+      newDeck.push(deck[boardSize + newSetIndices[j]]);
       j++;
     }
   }
@@ -111,6 +137,10 @@ function validateSet(possibleGroup: CardType[]) {
 
 // export for testing
 export function validatePlanet(possibleGroup: CardType[]) {
+  // We don't know what order in which the user clicked the planet. AB - DE is the invariant
+  // for a planet, however the user may have clicked in the order A, D, E, B. Therefore, we
+  // have to check every combinatorially distinct possibility of cards in our vector for
+  // a possible planet.
   let firstValid = true;
   let secondValid = true;
   let thirdValid = true;
@@ -118,7 +148,7 @@ export function validatePlanet(possibleGroup: CardType[]) {
   // we don't know the length of the card, but we can assume all cards have the same length
   for (let i in possibleGroup[0].vector) {
     // These are the only possibilities. 4! = 24 but the subtraction is commutative in this
-    // case (since 0 mod 3) and addition is always communtative so 24 / (2 * 2 * 2)
+    // case (since 0 mod 3) and addition is always commutative so 24 / (2 * 2 * 2)
     // = 24 / 8 = 3.
     if ((pg[0][i] + pg[1][i] - pg[2][i] - pg[3][i]) % 3 !== 0) {
       firstValid = false;
@@ -133,21 +163,25 @@ export function validatePlanet(possibleGroup: CardType[]) {
   return firstValid || secondValid || thirdValid;
 }
 
-export function findValidGroups(board: CardType[], mode: Mode): CardType[][] {
+export function findValidGroups(board: CardType[], mode: Mode, cardsToIgnore?: CardType[]): CardType[][] {
   // console.log(board.length);
   if (mode === Mode.Set) {
-    return findValidSets(board);
+    return findValidSets(board, cardsToIgnore);
   } else if (mode === Mode.Planet) {
-    return findValidPlanets(board);
+    return findValidPlanets(board, cardsToIgnore);
   }
   throw new Error("Unsupported Mode");
 }
 
-function findValidSets(board: CardType[]) {
+function findValidSets(board: CardType[], cardsToIgnore?: CardType[]) {
+  if (!cardsToIgnore) cardsToIgnore = [];
   const foundGroups: CardType[][] = [];
   for (let i = 0; i < board.length - 2; i++) {
+    if (cardsToIgnore.includes(board[i])) continue;
     for (let j = i + 1; j < board.length - 1; j++) {
+      if (cardsToIgnore.includes(board[j])) continue;
       for (let k = j + 1; k < board.length; k++) {
+        if (cardsToIgnore.includes(board[k])) continue;
         const possibleGroup = [board[i], board[j], board[k]];
         if (validateSet(possibleGroup)) {
           foundGroups.push(possibleGroup);
@@ -158,12 +192,17 @@ function findValidSets(board: CardType[]) {
   return foundGroups;
 }
 
-function findValidPlanets(board: CardType[]) {
+function findValidPlanets(board: CardType[], cardsToIgnore?: CardType[]) {
+  if (!cardsToIgnore) cardsToIgnore = [];
   const foundGroups: CardType[][] = [];
   for (let i = 0; i < board.length - 3; i++) {
+    if (cardsToIgnore.includes(board[i])) continue;
     for (let j = i + 1; j < board.length - 2; j++) {
+      if (cardsToIgnore.includes(board[j])) continue;
       for (let k = j + 1; k < board.length - 1; k++) {
+        if (cardsToIgnore.includes(board[k])) continue;
         for (let l = k + 1; l < board.length; l++) {
+          if (cardsToIgnore.includes(board[l])) continue;
           const possibleGroup = [board[i], board[j], board[k], board[l]];
           // console.log("i" + i);
           // console.log("j" + j);

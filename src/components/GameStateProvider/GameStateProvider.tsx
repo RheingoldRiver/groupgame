@@ -2,7 +2,7 @@ import { createContext, ReactNode, useEffect } from "react";
 import { useState } from "react";
 import { CardType } from "../Card/cardTypes";
 import { DEFAULT_GAME_STATE, HandleNoGroups, InvalidCard, Mode, MODE_SETTINGS } from "./gameStateConstants";
-import { board, buildDeck, findValidGroups, getCard, removeCards, validateGroup } from "./gameStateHelpers";
+import { board, buildDeck, findValidGroups, getCard, takePlayerFoundGroups, validateGroup } from "./gameStateHelpers";
 
 export const GameStateContext = createContext(DEFAULT_GAME_STATE);
 
@@ -35,6 +35,8 @@ export function GameStateProvider({ children }: { children: ReactNode }) {
     setCurrentGroup([]);
     setInvalidGroup([]);
     setHint(undefined);
+    setAnswer([]);
+    setTurn(0);
     setBoardSize(MODE_SETTINGS[mode].boardSize);
     setEndOfGame(false);
   }
@@ -48,6 +50,7 @@ export function GameStateProvider({ children }: { children: ReactNode }) {
 
   function startOver() {
     setDeck(thisDeck);
+    startOfGame();
   }
 
   function handleCardClick(card: CardType) {
@@ -90,7 +93,16 @@ export function GameStateProvider({ children }: { children: ReactNode }) {
         setEndOfGame(true);
         return;
       }
-      const newDeck = removeCards(deck, newCurrentGroup, boardSize, cardsPerGroup);
+      // The size decrement happens prior to the Card dealing. Then we deal the cards that were
+      // previously on the board visible into the slots that now occupy the newly-empty
+      // group squares.
+      let didDecrement = false;
+      const incrementSize = MODE_SETTINGS[mode].incrementSize;
+      if (shouldDecrementSize(newCurrentGroup)) {
+        decrementSize(incrementSize);
+        didDecrement = true;
+      }
+      const newDeck = takePlayerFoundGroups(deck, newCurrentGroup, boardSize, cardsPerGroup, didDecrement);
       setCurrentGroup([]);
       setDeck(newDeck);
       setTurn(turn + 1);
@@ -115,6 +127,19 @@ export function GameStateProvider({ children }: { children: ReactNode }) {
     }
   }
 
+  function shouldDecrementSize(cardsToIgnore: CardType[]) {
+    if (turn === 0) return false;
+    if (boardSize <= MODE_SETTINGS[mode].boardSize) return false;
+    return findValidGroups(board(deck, boardSize), mode, cardsToIgnore).length > 0;
+  }
+
+  function decrementSize(incrementSize: number) {
+    // in this case we do nothing. Don't deal out more cards. There's a set here
+    // already. We're good. Yay.
+    setBoardSize(boardSize - incrementSize);
+    return;
+  }
+
   useEffect(() => {
     if (invalidGroup.length === 0) return;
     invalidGroup.map((ic) => ic.destroy());
@@ -122,16 +147,11 @@ export function GameStateProvider({ children }: { children: ReactNode }) {
 
   useEffect(() => {
     // Adjust the board size if no sets are found
+    // Decreasing the board size must be done concurrently with a card deal
+    // and so we will do that in the removeCards function.
+
     const incrementSize = MODE_SETTINGS[mode].incrementSize;
-    if (
-      boardSize > MODE_SETTINGS[mode].boardSize &&
-      findValidGroups(board(deck, boardSize - incrementSize), mode).length > 0 &&
-      turn > 0
-    ) {
-      // this should just tell it not to deal more cards next time
-      setBoardSize(boardSize - incrementSize);
-      return;
-    }
+
     if (handleNoGroups !== HandleNoGroups.Auto) return;
     if (findValidGroups(board(deck, boardSize), mode).length > 0) return;
 
