@@ -73,23 +73,17 @@ export function takePlayerFoundGroups(
 ) {
   const newDeck = [];
   let j = 0;
-  let newSetIndices = [0, 1, 2];
+  let newSetIndices = range(groupSize);
   if (didDecrement) {
     boardSize = boardSize - groupSize;
     let j = 0;
-    console.log(matchedGroup);
-    console.log("kittens");
-    console.log(boardSize);
     for (let i = boardSize; i < boardSize + groupSize; i++) {
-      console.log(deck[i]);
-      console.log("deck[i]");
       if (matchedGroup.includes(deck[i])) {
         newSetIndices = newSetIndices.filter((item) => item != j);
       }
       j++;
     }
   }
-  console.log(newSetIndices);
   for (let i in deck) {
     let card = deck[i];
     if (toNumber(i) >= boardSize + groupSize) {
