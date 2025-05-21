@@ -27,7 +27,7 @@ export function addAttribute(numLeft: number, deck: CardType[]): CardType[] {
 
 export function shuffleDeck(deck: CardType[]) {
   const max = deck.length;
-  for (let k = 0; k < 100; k++) {
+  for (let k = 0; k < max * 10; k++) {
     const a = getRandomInt(max);
     const b = getRandomInt(max);
     const card1 = deck[a];
